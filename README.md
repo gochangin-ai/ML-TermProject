@@ -1,6 +1,6 @@
 # ML-TermProject
 
-## recommendation recommendation
+## recommendation system
 + Collaborative filtering
 + Content-based filtering
 
