@@ -6,7 +6,7 @@
 
 ## [Code with User Manual](https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#code-with-user-manual) <
 ## [Results](https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#results) <
-## [Dataset] (https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#Dataset) <
+## [Dataset](https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#Dataset) <
 
 
 
