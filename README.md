@@ -17,7 +17,7 @@ The datasets describe ratings and free-text tagging activities from MovieLens, a
 
 Users were selected at random for inclusion. All selected users had rated at least 20 movies.
 
-# ※you have to download rating.csv and put in 'input' folder ! ※
+※you have to download rating.csv and put in 'input' folder to use this recommendation system ! ※
 
 
 # Code With User Manual
