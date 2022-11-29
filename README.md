@@ -192,24 +192,24 @@ def writing_gradient(before, after, recommend):
 ## class MatrixFactorization()
 ### def _init_(self, R, k, learning_rate, reg_param, epochs, verbose=False)
 #### This function runs automatically when the class is called.
-#### param R: rating matrix
-#### param k: latent parameter
-#### param learning_rate: alpha on weight update
-#### param reg_param: beta on weight update
-#### param epochs: training epochs
-#### param verbose: print status
-### def fit(self)
-#### Train Matrix factorization with updating matrix latent weight and bias
-### def cost(self)
-#### Calculate the error for the entire matrix.
+##### param R: rating matrix
+##### param k: latent parameter
+##### param learning_rate: alpha on weight update
+##### param reg_param: beta on weight update
+##### param epochs: training epochs
+##### param verbose: print status
+##### def fit(self)
+Train Matrix factorization with updating matrix latent weight and bias
+##### def cost(self)
+Calculate the error for the entire matrix.
 ### def gradient(self, error, i, j)
-#### Calculate gradient of latent feature for gradient descent
-### def gradient_descent(self, i, j, rating)
-#### Do gradient descent
-### def get_prediction(self, i, j)
-#### Get predicted ratings
-### def get_complete_matrix(self)
-#### Make complete rating matrix
+Calculate gradient of latent feature for gradient descent
+##### def gradient_descent(self, i, j, rating)
+Do gradient descent
+##### def get_prediction(self, i, j)
+Get predicted ratings
+##### def get_complete_matrix(self)
+Make complete rating matrix
 
 
 ```python
