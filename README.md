@@ -3,7 +3,6 @@
 ## recommendation system
 + Collaborative filtering
 + Content-based filtering
-+ 
 ## [Dataset](https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#Dataset) <
 ## [Code with User Manual](https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#code-with-user-manual) <
 ## [Results](https://github.com/gochangin-ai/ML-TermProject/blob/main/README.md#results) <
@@ -45,16 +44,122 @@ pd.set_option('display.max_columns', None)
 ```
 
 
-## Content Based filtering using TF-IDF vectorizer
-reference : https://www.kaggle.com/code/sankha1998/content-based-movie-reommendation-system
+## Content-Based Filtering using KNN
+reference:
+1. https://www.kaggle.com/code/yogeshrampariya/content-based-recommendation-system
 
-## preprocessing_tfidf
-### get movie, rating data, and Data Transformation
-#### Parameter : movie   |  path of movie.csv
-####             rating  |  path of rating.csv
-#### Result    : df      |  data frame that transformed
-####             sigmoid matrix | TFIDF vectorized matrix using sigmoid kernel
-                 cosine matrix  | TFIDF vectorized matrix using cosine similarity
+### Function : content_based_preprocessing(mov)
+#### Delete the ‘genres’ column of the existing movie dataset and create a new column for all genres. And if each movie belongs to the corresponding genre column, the value is displayed as 1, otherwise it is displayed as 0.
+##### Parameter:
+##### mov | dataframe
+##### Return:
+##### gen_mat | dataframe
+```python
+def content_based_preprocessing(mov):
+    genre = mov['genres'].str.split('|', expand=True)
+    print(genre)
+    gen_mat = mov[['movieId', 'genres']].copy()
+    gen_mat['genres'] = gen_mat['genres'].str.lower().str.strip()
+    print(gen_mat.head(5))
+
+    all_gen = List_All_Genres(movies1)
+    print(all_gen)
+
+    for gen in all_gen:
+        gen_mat[gen] = np.where(gen_mat['genres'].str.contains(gen), 1, 0)
+
+    pd.set_option('display.max_columns', None)
+    print(gen_mat.head(3))
+
+    # Drop genres
+    gen_mat.drop('genres', axis=1, inplace=True)
+    gen_mat = gen_mat.set_index('movieId')
+    print(gen_mat.head(3))
+
+    return gen_mat
+```
+
+### Function : List_All_Genres(movies)
+#### Extract all genres of movies and save them to a list.
+##### Parameter:
+##### movies | dataframe
+##### Return:
+##### genres | list
+```python
+def List_All_Genres(movies):
+    genres = []
+    for genre in movies.genres:
+        x = genre.split('|')
+        for i in x:
+            if (str(i).lower() not in genres):
+                my_genres = str(i).lower()
+                genres.append(my_genres)
+    return genres
+```
+
+### Function : content_based_model_build(gen_, my_list, top_k, map_name)
+#### Calculate the genre table obtained from content_based_preprocessing(mov) using cosine similarity. And recommend movies by selecting k with the highest similarity.
+##### Parameter:
+##### gen | dataframe
+##### my_list | list
+##### top_k | int
+##### map_name | dict
+```python
+def content_based_model_build(gen_, my_list, top_k, map_name):
+    for item_id in my_list:
+        print('Movie Selected : {0}'.format(movies1.values[item_id]))
+        corr_mat = cosine_similarity(gen_)
+        # sort correlation value ascendingly and select top_k item_id
+        top_items = corr_mat[item_id, :].argsort()[-top_k:][::-1]
+        top_items = [map_name[e] for e in top_items]
+
+        print(movies1.loc[movies1['movieId'].isin(top_items)])
+        print('\n')
+```
+
+### Function : convert_mov_and_idx(gen)
+#### The id value of the movie corresponding to the index of the data frame is stored, and the index of the data frame corresponding to the id value of the movie is stored.
+##### Parameter:
+##### gen | dataframe
+##### Return:
+##### i2m | dict
+##### m2i | dict
+```python
+def convert_mov_and_idx(gen):
+    i2m = {index: movie for index, movie in enumerate(gen.index)}
+    m2i = {v: k for k, v in i2m.items()}
+    return i2m, m2i
+```
+
+### Function : read_contentBased_test()
+#### Read a test dataset consisting of movie id
+##### Return:
+##### Int_test_list | list
+```python
+def read_contentBased_test():
+    df = pd.read_csv('input/contentBased_knn_test.csv')
+    test_list = df.columns.values.tolist()
+    int_test_list = list(map(int, test_list))
+
+    return int_test_list
+```
+
+
+
+## Content-Based Filtering using TF-IDF vectorizer
+reference: 
+1. https://www.kaggle.com/code/sankha1998/content-based-movie-reommendation-system
+
+### Function : preprocessing_tfidf
+#### get movie, rating data, and Data Transformation
+##### Parameter: 
+##### movie   |  path of movie.csv
+##### rating  |  path of rating.csv
+##### Return:
+##### df      |  data frame that transformed
+##### sigmoid matrix | TFIDF vectorized matrix using sigmoid kernel
+##### cosine matrix  | TFIDF vectorized matrix using cosine similarity
+                 
 ```python
 def preprocessing_tfidf(movie,rating):
     movie=pd.read_csv(movie)
@@ -97,11 +202,12 @@ def preprocessing_tfidf(movie,rating):
     return df1, sigmoid_matrix,cosine_matrix
 ```
 
-## recommendations_cosine_similarity
-### Content-based recommendation using cosine similarity
-#### Parameter : title   |  Query movie title to find recommendations
-####             df1  |  data frame that transformed before
-####             cosine_matrix | TFIDF vectorized matrix using cosine similarity
+### Function : recommendations_cosine_similarity
+#### Content-based recommendation using cosine similarity
+##### Parameter: 
+##### title   |  Query movie title to find recommendations
+#####             df1  |  data frame that transformed before
+#####             cosine_matrix | TFIDF vectorized matrix using cosine similarity
 
 ```python
 def recommendations_cosine_similarity(title,df1,cosine_matrix):
@@ -126,11 +232,12 @@ def recommendations_cosine_similarity(title,df1,cosine_matrix):
             print(('{},  {}'.format(indices.iloc[i_d].index[i], score)))
 ```
 
-## recommendations_sigmoid_kernel
-### Content-based recommendation using cosine similarity
-#### Parameter : title   |  Query movie title to find recommendations
-####             df1  |  data frame that transformed before
-####             sigmoid_matrix | TFIDF vectorized matrix using sigmoid_matrix
+### Function : recommendations_sigmoid_kernel
+#### Content-based recommendation using cosine similarity
+##### Parameter:
+##### title   |  Query movie title to find recommendations
+##### df1  |  data frame that transformed before
+##### sigmoid_matrix | TFIDF vectorized matrix using sigmoid_matrix
 
 ```python
 def recommendations_sigmoid_kernel(title,df1,sigmoid_matrix):
@@ -156,12 +263,99 @@ def recommendations_sigmoid_kernel(title,df1,sigmoid_matrix):
             print(('{},  {}'.format(indices.iloc[i_d].index[i], score)))
 ```
 
-## collaborative filtering using SGD
+## Collaborative Filtering using KNN
+reference:
+1. https://pearlluck.tistory.com/667
+
+
+### Function : collaborative_preprocessing(movies, ratings)
+#### It receives movie and rating datasets as input. Modify the ratings dataset to only consider users who have rated more than 80 movies. Delete unnecessary columns.
+#####	Parameter:
+#####	movies | dataframe
+#####	ratings | dataframe
+#####  Return:
+#####  ratings_t1 | dataframe
+
+```python
+def collaborative_preprocessing(movies):
+    movies['genres'] = movies['genres'].str.replace('|', ' ')
+
+    # limit ratings to user ratings that have rated more than 80 movies
+    # Otherwise it becomes impossible to pivot the rating dataframe later for collaborative filtering
+    ratings_t = ratings.groupby('userId').filter(lambda x: len(x) > 80)
+
+    # list the movie titles that survive the filtering
+    movie_list_rating = ratings_t.movieId.unique().tolist()
+    movies = movies[movies.movieId.isin(movie_list_rating)]
+
+    ratings_t.drop(['timestamp'], axis=1, inplace=True)
+    ratings_t = ratings_t.iloc[:1000000, :]
+    ratings_t1 = pd.merge(movies[['movieId']], ratings_t, on='movieId', how='right')
+
+    print(ratings_t1.head(5))
+
+    return ratings_t1
+```
+
+### Function : collaborative_model_building(my_ratings)
+#### Create a table with index=movie, column=user, and treat NaN as 0. Convert this table to CSR matrix and save it. Generate a knn model by putting this matrix as data.
+##### Parameter:
+##### my_ratings | dataframe
+##### Return:
+##### model_knn | model
+##### mat_movies_users | csr_matrix
+
+```python
+def collaborative_model_building(my_ratings):
+    movies_users = my_ratings.pivot(index='movieId', columns='userId', values='rating').fillna(0)
+    mat_movies_users = csr_matrix(movies_users.values)
+
+    model_knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=10)
+    model_knn.fit(mat_movies_users)
+
+    return model_knn, mat_movies_users
+```
+### Function : collaborative_recommender(test_list, data, model, n_recommendations)
+#### As a function that recommends movies with similar ratings to the movies entered as input. The similarity is calculated using the cosine_similarity, and print the information of the movie with the highest similarity.
+##### Parameter:
+##### test_list | list
+#####	data | dataframe
+##### model | model
+##### n_recommendations | int
+
+```python
+def collaborative_recommender(test_list, data, model, n_recommendations):
+    model.fit(data)
+
+    for movie_name in test_list:
+        idx = process.extractOne(movie_name, movies['title'])[2]
+        print('Movie Selected: ', movies['title'][idx], 'Index: ', idx)
+        print('Searching for recommendations.....')
+        distances, indices = model.kneighbors(data[idx], n_neighbors=n_recommendations)
+        for i in indices:
+            print(movies['title'][i].where(i != idx))
+        print('\n')
+```
+
+### Function : read_collaborative_test()
+#### Read a test dataset consisting of movie titles
+##### Return:
+##### test_list | list
+```python
+def read_collaborative_test():
+    df = pd.read_csv('input/collaborative_knn_test.csv')
+    test_list = df.columns.values.tolist()
+    return test_list
+```
+
+
+
+## Collaborative Filtering using SGD
 reference: https://yamalab.tistory.com/92
 
 
-## preprocessing_gradient()
-### Read input file data and Make uid x movie matrix
+### Function : preprocessing_gradient()
+#### Read input file data and Make uid x movie matrix
 
 
 ```python
@@ -181,8 +375,8 @@ def preprocessing_gradient():
 ```
 
 
-## def writing_gradient(before, after, recommend)
-### Make before, after, recommend dataframe csv files
+### Function : writing_gradient(before, after, recommend)
+#### Make before, after, recommend dataframe csv files
 
 ```python
 def writing_gradient(before, after, recommend):
@@ -190,26 +384,33 @@ def writing_gradient(before, after, recommend):
     after.to_csv("after_g.csv", mode='w')
     recommend.to_csv("recommend_g.csv", mode='w')
 ```
-## class MatrixFactorization()
-### def _init_(self, R, k, learning_rate, reg_param, epochs, verbose=False)
-#### This function runs automatically when the class is called.
-##### param R: rating matrix
-##### param k: latent parameter
-##### param learning_rate: alpha on weight update
-##### param reg_param: beta on weight update
-##### param epochs: training epochs
-##### param verbose: print status
-##### def fit(self)
+### class MatrixFactorization()
+#### Function : def _init_(self, R, k, learning_rate, reg_param, epochs, verbose=False)
+##### This function runs automatically when the class is called.
+###### Parameter:
+###### R: rating matrix
+###### k: latent parameter
+###### learning_rate: alpha on weight update
+###### reg_param: beta on weight update
+###### epochs: training epochs
+###### verbose: print status
+
+#### Function : fit(self)
 Train Matrix factorization with updating matrix latent weight and bias
-##### def cost(self)
+
+#### Function : cost(self)
 Calculate the error for the entire matrix.
-### def gradient(self, error, i, j)
+
+#### Function : gradient(self, error, i, j)
 Calculate gradient of latent feature for gradient descent
-##### def gradient_descent(self, i, j, rating)
+
+#### Function : gradient_descent(self, i, j, rating)
 Do gradient descent
-##### def get_prediction(self, i, j)
+
+#### Function : get_prediction(self, i, j)
 Get predicted ratings
-##### def get_complete_matrix(self)
+
+#### Function : get_complete_matrix(self)
 Make complete rating matrix
 
 
@@ -325,8 +526,8 @@ class MatrixFactorization():
 
 
 
-## main code 
-###  Content-based filtering, Collaborative filtering , File IO 
+## Main Code 
+###  Content-Based Filtering, Collaborative Filtering , File IO 
 ```python
 # Content-based filtering
 #TFIDF vectorizer
