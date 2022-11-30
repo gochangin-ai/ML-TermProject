@@ -277,7 +277,7 @@ reference:
 #####  ratings_t1 | dataframe
 
 ```python
-def collaborative_preprocessing(movies):
+def collaborative_preprocessing(movies, ratings):
     movies['genres'] = movies['genres'].str.replace('|', ' ')
 
     # limit ratings to user ratings that have rated more than 80 movies
@@ -547,7 +547,7 @@ content_based_model_build(gen_= my_genres, my_list = contentBased_test_list, top
 
 
 # Collaborative filtering
-my_ratings = collaborative_preprocessing(movies)
+my_ratings = collaborative_preprocessing(movies, ratings)
 my_model, my_movie_user = collaborative_model_building(my_ratings)
 # Read the collaborative test dataset
 collaborative_test_list = read_collaborative_test()
