@@ -241,7 +241,7 @@ References
 1. https://pearlluck.tistory.com/667
 2. https://www.kaggle.com/code/yogeshrampariya/content-based-recommendation-system
 """
-def collaborative_preprocessing(movies):
+def collaborative_preprocessing(movies, ratings):
     movies['genres'] = movies['genres'].str.replace('|', ' ')
 
     # limit ratings to user ratings that have rated more than 80 movies
