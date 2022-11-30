@@ -364,7 +364,7 @@ content_based_model_build(gen_= my_genres, my_list = contentBased_test_list, top
 
 
 # Collaborative filtering
-my_ratings = collaborative_preprocessing(movies)
+my_ratings = collaborative_preprocessing(movies, ratings)
 my_model, my_movie_user = collaborative_model_building(my_ratings)
 # Read the collaborative test dataset
 collaborative_test_list = read_collaborative_test()
